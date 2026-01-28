@@ -1,0 +1,6 @@
+
+{
+  "name": "VeriNews AI - Fake News Detector",
+  "description": "An advanced AI-powered platform that analyzes news articles for factual accuracy, linguistic bias, and misinformation using Gemini's semantic reasoning and real-time grounding.",
+  "requestFramePermissions": []
+}
