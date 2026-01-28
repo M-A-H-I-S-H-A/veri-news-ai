@@ -1,17 +1,22 @@
-
 import { GoogleGenAI, Type } from "@google/genai";
-import { AnalysisResult, Verdict } from "../types";
-
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+import { AnalysisResult } from "../types";
 
 export const analyzeNews = async (content: string): Promise<AnalysisResult> => {
+  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+
+  if (!apiKey) {
+    throw new Error("Gemini API key is missing");
+  }
+
+  const ai = new GoogleGenAI({ apiKey });
+
   const model = "gemini-3-flash-preview";
-  
+
   const systemInstruction = `
-    You are an expert news analyst and fact-checker. 
-    Analyze the provided news text for authenticity. 
+    You are an expert news analyst and fact-checker.
+    Analyze the provided news text for authenticity.
     Simulate a multi-layered NLP pipeline:
-    1. Linguistic Pattern Analysis (TF-IDF simulation: identify key terms associated with misinformation).
+    1. Linguistic Pattern Analysis (TF-IDF simulation).
     2. Sentiment & Bias detection.
     3. Factual verification using Google Search.
     4. Logical fallacy detection.
@@ -24,7 +29,7 @@ export const analyzeNews = async (content: string): Promise<AnalysisResult> => {
     ---
     ${content}
     ---
-    
+
     Assess the content based on linguistic patterns, sensationalism, and factual consistency.
   `;
 
@@ -39,13 +44,12 @@ export const analyzeNews = async (content: string): Promise<AnalysisResult> => {
         responseSchema: {
           type: Type.OBJECT,
           properties: {
-            verdict: { 
-              type: Type.STRING, 
-              enum: ["REAL", "LIKELY REAL", "MIXED", "LIKELY FAKE", "FAKE"],
-              description: "The overall credibility verdict."
+            verdict: {
+              type: Type.STRING,
+              enum: ["REAL", "LIKELY REAL", "MIXED", "LIKELY FAKE", "FAKE"]
             },
-            confidence: { type: Type.NUMBER, description: "Confidence score from 0-100" },
-            summary: { type: Type.STRING, description: "A concise 2-sentence summary of why this verdict was reached." },
+            confidence: { type: Type.NUMBER },
+            summary: { type: Type.STRING },
             metrics: {
               type: Type.ARRAY,
               items: {
@@ -60,24 +64,30 @@ export const analyzeNews = async (content: string): Promise<AnalysisResult> => {
             },
             logicalFallacies: {
               type: Type.ARRAY,
-              items: { type: Type.STRING },
-              description: "List of logical fallacies identified (e.g., Straw Man, Appeal to Fear)."
+              items: { type: Type.STRING }
             },
             linguisticPatterns: {
               type: Type.ARRAY,
-              items: { type: Type.STRING },
-              description: "Keywords or stylistic features (TF-IDF style) that triggered suspicion."
+              items: { type: Type.STRING }
             }
           },
-          required: ["verdict", "confidence", "summary", "metrics", "logicalFallacies", "linguisticPatterns"]
+          required: [
+            "verdict",
+            "confidence",
+            "summary",
+            "metrics",
+            "logicalFallacies",
+            "linguisticPatterns"
+          ]
         }
       }
     });
 
     const data = JSON.parse(response.text || "{}");
-    
-    // Extract grounding URLs if available
-    const groundingChunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks || [];
+
+    const groundingChunks =
+      response.candidates?.[0]?.groundingMetadata?.groundingChunks || [];
+
     const sources = groundingChunks
       .filter((chunk: any) => chunk.web)
       .map((chunk: any) => ({
@@ -92,6 +102,6 @@ export const analyzeNews = async (content: string): Promise<AnalysisResult> => {
 
   } catch (error) {
     console.error("Gemini Analysis Error:", error);
-    throw new Error("Failed to analyze the news. Please try again later.");
+    throw new Error("Failed to analyze the news.");
   }
 };
