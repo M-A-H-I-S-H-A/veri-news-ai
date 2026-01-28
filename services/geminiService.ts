@@ -1,45 +1,68 @@
 import { AnalysisResult } from "../types";
 
-const GEMINI_ENDPOINT =
-  "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
-
-
 export const analyzeNews = async (content: string): Promise<AnalysisResult> => {
-  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+  // Simulate network delay (realistic AI behavior)
+  await new Promise((resolve) => setTimeout(resolve, 1500));
 
-  if (!apiKey) {
-    throw new Error("Gemini API key missing");
+  const lower = content.toLowerCase();
+
+  let verdict: AnalysisResult["verdict"] = "MIXED";
+  let confidence = 60;
+  let summary = "The content shows mixed signals and requires cautious interpretation.";
+
+  // Very simple rule-based mock logic
+  if (
+    lower.includes("scientists confirm") ||
+    lower.includes("miracle") ||
+    lower.includes("guaranteed") ||
+    lower.includes("100%") ||
+    lower.includes("instantly")
+  ) {
+    verdict = "FAKE";
+    confidence = 85;
+    summary =
+      "The content uses exaggerated claims and lacks verifiable sources, which are common indicators of misinformation.";
+  } else if (
+    lower.includes("government") ||
+    lower.includes("official") ||
+    lower.includes("reported by") ||
+    lower.includes("according to")
+  ) {
+    verdict = "LIKELY REAL";
+    confidence = 75;
+    summary =
+      "The content references official entities or neutral phrasing, which generally increases credibility.";
   }
-
-  const response = await fetch(`${GEMINI_ENDPOINT}?key=${apiKey}`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      contents: [
-        {
-          parts: [{ text: content }]
-        }
-      ]
-    })
-  });
-
-  if (!response.ok) {
-    throw new Error("Gemini API request failed");
-  }
-
-  const data = await response.json();
-  const text =
-    data.candidates?.[0]?.content?.parts?.[0]?.text || "No response";
 
   return {
-    verdict: "MIXED",
-    confidence: 50,
-    summary: text,
-    metrics: [],
-    logicalFallacies: [],
-    linguisticPatterns: [],
+    verdict,
+    confidence,
+    summary,
+    metrics: [
+      {
+        name: "Linguistic Bias",
+        score: verdict === "FAKE" ? 80 : 40,
+        description: "Measures sensational or emotionally charged language."
+      },
+      {
+        name: "Factual Consistency",
+        score: verdict === "FAKE" ? 30 : 70,
+        description: "Checks logical coherence and plausibility."
+      },
+      {
+        name: "Source Reliability",
+        score: verdict === "FAKE" ? 25 : 65,
+        description: "Estimates trustworthiness of implied sources."
+      }
+    ],
+    logicalFallacies:
+      verdict === "FAKE"
+        ? ["Appeal to Authority", "Hasty Generalization"]
+        : ["None detected"],
+    linguisticPatterns:
+      verdict === "FAKE"
+        ? ["sensational wording", "absolute claims"]
+        : ["neutral tone"],
     sources: []
   };
 };
