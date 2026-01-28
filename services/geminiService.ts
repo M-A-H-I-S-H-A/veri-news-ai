@@ -1,7 +1,8 @@
 import { AnalysisResult } from "../types";
 
 const GEMINI_ENDPOINT =
-  "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent";
+  "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
+
 
 export const analyzeNews = async (content: string): Promise<AnalysisResult> => {
   const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
