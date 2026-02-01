@@ -1,20 +1,46 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# VeriNewsAI – Fake News Detection System
 
-# Run and deploy your AI Studio app
+VeriNewsAI is a web-based fake news detection system that analyzes news text and provides a credibility verdict using an AI-inspired analysis pipeline.
 
-This contains everything you need to run your app locally.
+The project is designed for educational and demonstration purposes and showcases frontend development, deployment, and AI system architecture concepts.
 
-View your app in AI Studio: https://ai.studio/apps/temp/1
+---
 
-## Run Locally
+## Live Demo
+🔗 https://YOUR-VERCEL-LINK.vercel.app
 
-**Prerequisites:**  Node.js
+---
 
+## Features
+- Fake news credibility analysis
+- Verdict classification (REAL / LIKELY REAL / MIXED / LIKELY FAKE / FAKE)
+- Confidence score generation
+- Linguistic pattern & logical fallacy analysis
+- Session history tracking
+- Clean, modern UI
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+---
+
+##  How It Works
+- User inputs news text
+- The system analyzes linguistic cues and credibility indicators
+- A simulated AI inference layer produces verdict and confidence scores
+- Results are displayed visually with explanations
+
+> ⚠️ Note: This project currently uses a mock AI inference layer for reliability and cost-free deployment. The architecture supports real AI API integration.
+
+---
+
+## Tech Stack
+- React
+- TypeScript
+- Vite
+- Tailwind CSS
+- Vercel (Deployment)
+
+---
+
+## Project Setup (Local)
+```bash
+npm install
+npm run dev
