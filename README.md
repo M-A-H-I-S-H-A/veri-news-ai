@@ -7,7 +7,7 @@ The project is designed for educational and demonstration purposes and showcases
 ---
 
 ## Live Demo
-🔗 https://YOUR-VERCEL-LINK.vercel.app
+🔗 https://veri-news-ai-zh76.vercel.app/
 
 ---
 
